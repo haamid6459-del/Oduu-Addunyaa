@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="om">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Oduu Addunyaa</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f8;
+  color:#222;
+}
+
+header{
+  background:#075e54;
+  color:white;
+  padding:18px 15px;
+  position:sticky;
+  top:0;
+  z-index:10;
+  box-shadow:0 2px 8px #0003;
+}
+
+header h1{
+  text-align:center;
+  font-size:24px;
+}
+
+header p{
+  text-align:center;
+  margin-top:5px;
+  font-size:13px;
+}
+
+.search{
+  padding:12px;
+  background:white;
+}
+
+.search input{
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:25px;
+  outline:none;
+  font-size:15px;
+}
+
+.categories{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:10px;
+  background:white;
+}
+
+.categories button{
+  border:0;
+  background:#e8eeee;
+  padding:9px 15px;
+  border-radius:20px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.categories button.active{
+  background:#075e54;
+  color:white;
+}
+
+.refresh{
+  padding:10px;
+}
+
+.refresh button{
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:8px;
+  background:#128c7e;
+  color:white;
+  font-size:16px;
+}
+
+#news{
+  padding:10px;
+}
+
+.card{
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px #0002;
+}
+
+.card img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  background:#ddd;
+}
+
+.card-content{
+  padding:14px;
+}
+
+.card h2{
+  font-size:18px;
+  line-height:1.4;
+  margin-bottom:8px;
+}
+
+.card p{
+  color:#555;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+  color:#777;
+  font-size:12px;
+}
+
+.read{
+  display:inline-block;
+  margin-top:12px;
+  padding:9px 14px;
+  background:#075e54;
+  color:white;
+  text-decoration:none;
+  border-radius:7px;
+}
+
+.loading{
+  text-align:center;
+  padding:30px;
+}
+
+.error{
+  background:#ffe5e5;
+  padding:15px;
+  border-radius:8px;
+  margin:10px;
+  color:#a00;
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#777;
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌍 ODUU ADDUNYAA</h1>
+  <p>Oduu haaraa addunyaa irraa</p>
+</header>
+
+<div class="search">
+  <input
+    type="text"
+    id="search"
+    placeholder="🔎 Oduu barbaadi..."
+    oninput="searchNews()"
+  >
+</div>
+
+<div class="categories">
+
+  <button class="active"
+    onclick="loadCategory('world',this)">
+    🌍 Addunyaa
+  </button>
+
+  <button
+    onclick="loadCategory('ethiopia',this)">
+    🇪🇹 Itoophiyaa
+  </button>
+
+  <button
+    onclick="loadCategory('islam',this)">
+    🕌 Islaamaa
+  </button>
+
+  <button
+    onclick="loadCategory('sport',this)">
+    ⚽ Ispoortii
+  </button>
+
+  <button
+    onclick="loadCategory('technology',this)">
+    💻 Teknooloojii
+  </button>
+
+  <button
+    onclick="loadCategory('business',this)">
+    💰 Dinagdee
+  </button>
+
+</div>
+
+<div class="refresh">
+  <button onclick="refreshNews()">
+    🔄 Oduu Haaraa Haaromsi
+  </button>
+</div>
+
+<div id="news">
+  <div class="loading">
+    ⏳ Oduu barbaadaa jira...
+  </div>
+</div>
+
+<footer>
+  © 2026 Oduu Addunyaa
+</footer>
+
+
+<script>
+
+let currentCategory = "world";
+let allNews = [];
+
+
+/*
+  Google News RSS → RSS2JSON
+  API key hin barbaadu.
+*/
+
+const feeds = {
+
+  world:
+  "https://news.google.com/rss/search?q=world+news&hl=en-US&gl=US&ceid=US:en",
+
+  ethiopia:
+  "https://news.google.com/rss/search?q=Ethiopia+news&hl=en-US&gl=US&ceid=US:en",
+
+  islam:
+  "https://news.google.com/rss/search?q=Islam+news&hl=en-US&gl=US&ceid=US:en",
+
+  sport:
+  "https://news.google.com/rss/search?q=sports+news&hl=en-US&gl=US&ceid=US:en",
+
+  technology:
+  "https://news.google.com/rss/search?q=technology+news&hl=en-US&gl=US&ceid=US:en",
+
+  business:
+  "https://news.google.com/rss/search?q=business+news&hl=en-US&gl=US&ceid=US:en"
+};
+
+
+async function loadCategory(category,button){
+
+  currentCategory = category;
+
+  document.querySelectorAll(".categories button")
+  .forEach(b => b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  document.getElementById("search").value = "";
+
+  await getNews();
+}
+
+
+async function getNews(){
+
+  const newsBox = document.getElementById("news");
+
+  newsBox.innerHTML =
+    `<div class="loading">
+       ⏳ Oduu barbaadaa jira...
+     </div>`;
+
+  try{
+
+    const rssUrl =
+      encodeURIComponent(feeds[currentCategory]);
+
+    const api =
+      "https://api.rss2json.com/v1/api.json?rss_url="
+      + rssUrl;
+
+    const response = await fetch(api);
+
+    if(!response.ok){
+      throw new Error("Network error");
+    }
+
+    const data = await response.json();
+
+    allNews = data.items || [];
+
+    displayNews(allNews);
+
+  }catch(error){
+
+    newsBox.innerHTML = `
+      <div class="error">
+        ❌ Oduu fiduu hin dandeenye.
+        <br><br>
+        Internet kee ilaaliitii irra deebi'i.
+      </div>
+    `;
+
+  }
+
+}
+
+
+function displayNews(news){
+
+  const newsBox = document.getElementById("news");
+
+  if(!news.length){
+
+    newsBox.innerHTML = `
+      <div class="loading">
+        Oduun hin argamne.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  newsBox.innerHTML = news.map(item => {
+
+    let image =
+      item.thumbnail ||
+      getImage(item.description) ||
+      "https://via.placeholder.com/800x450?text=ODUU";
+
+    let description =
+      removeHTML(item.description || "");
+
+    if(description.length > 180){
+      description =
+        description.substring(0,180) + "...";
+    }
+
+    let date =
+      item.pubDate
+      ? new Date(item.pubDate).toLocaleDateString()
+      : "";
+
+    return `
+
+      <article class="card">
+
+        <img
+          src="${image}"
+          onerror="this.src='https://via.placeholder.com/800x450?text=ODUU'"
+          alt="Suuraa oduu"
+        >
+
+        <div class="card-content">
+
+          <h2>
+            ${item.title || "Mata-duree hin jiru"}
+          </h2>
+
+          <p>
+            ${description}
+          </p>
+
+          <div class="meta">
+
+            <span>
+              📰 ${item.author || "Madda oduu"}
+            </span>
+
+            <span>
+              ${date}
+            </span>
+
+          </div>
+
+          <a
+            class="read"
+            href="${item.link}"
+            target="_blank">
+            Oduu Guutuu Dubbisi →
+          </a>
+
+        </div>
+
+      </article>
+
+    `;
+
+  }).join("");
+
+}
+
+
+function searchNews(){
+
+  const word =
+    document.getElementById("search")
+    .value
+    .toLowerCase()
+    .trim();
+
+  if(!word){
+
+    displayNews(allNews);
+
+    return;
+  }
+
+  const result =
+    allNews.filter(item =>
+
+      (item.title || "")
+      .toLowerCase()
+      .includes(word)
+
+      ||
+
+      (item.description || "")
+      .toLowerCase()
+      .includes(word)
+
+    );
+
+  displayNews(result);
+
+}
+
+
+function refreshNews(){
+
+  getNews();
+
+}
+
+
+function removeHTML(text){
+
+  const div =
+    document.createElement("div");
+
+  div.innerHTML = text;
+
+  return div.textContent || div.innerText || "";
+
+}
+
+
+function getImage(description){
+
+  if(!description) return null;
+
+  const match =
+    description.match(/<img[^>]+src=["']([^"']+)["']/i);
+
+  return match ? match[1] : null;
+
+}
+
+
+// App yeroo jalqabaatti
+getNews();
+
+</script>
+
+</body>
+  </html>
