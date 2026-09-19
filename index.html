@@ -1,146 +1,153 @@
 <!DOCTYPE html>
 <html lang="om">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Oduu Addunyaa</title>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Oduu Addunyaa Afaan Oromoo</title>
 
 <style>
+
 *{
-  box-sizing:border-box;
+box-sizing:border-box;
 }
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f3f5f7;
-  color:#222;
+margin:0;
+font-family:Arial,sans-serif;
+background:#f2f4f7;
+color:#222;
 }
 
 header{
-  background:#075e54;
-  color:white;
-  padding:20px 15px;
-  text-align:center;
-  position:sticky;
-  top:0;
-  z-index:10;
+background:#075e54;
+color:white;
+padding:20px 12px;
+text-align:center;
 }
 
 header h1{
-  margin:0 0 15px;
+margin:0 0 15px;
 }
 
 .search{
-  display:flex;
-  gap:8px;
-  max-width:700px;
-  margin:auto;
+display:flex;
+gap:7px;
+max-width:700px;
+margin:auto;
 }
 
 .search input{
-  flex:1;
-  padding:13px;
-  border:0;
-  border-radius:8px;
-  font-size:16px;
+flex:1;
+padding:13px;
+border:0;
+border-radius:8px;
+font-size:16px;
 }
 
 .search button{
-  padding:13px 18px;
-  border:0;
-  border-radius:8px;
-  background:#fff;
-  color:#075e54;
-  font-weight:bold;
+border:0;
+border-radius:8px;
+padding:13px 17px;
+background:white;
+color:#075e54;
+font-weight:bold;
 }
 
 .categories{
-  display:flex;
-  gap:8px;
-  overflow-x:auto;
-  padding:12px;
-  background:white;
+display:flex;
+overflow-x:auto;
+gap:8px;
+padding:12px;
+background:white;
 }
 
 .categories button{
-  white-space:nowrap;
-  border:0;
-  padding:10px 15px;
-  border-radius:20px;
-  background:#e9eeee;
-  font-weight:bold;
+white-space:nowrap;
+border:0;
+padding:10px 15px;
+border-radius:20px;
+background:#e8eeee;
+font-weight:bold;
 }
 
 #status{
-  text-align:center;
-  padding:18px;
-  font-weight:bold;
+text-align:center;
+padding:18px;
+font-weight:bold;
 }
 
 #news{
-  max-width:800px;
-  margin:auto;
-  padding:10px;
+max-width:800px;
+margin:auto;
+padding:10px;
 }
 
 .card{
-  background:white;
-  margin-bottom:18px;
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 2px 8px #0002;
+background:white;
+margin-bottom:18px;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 2px 8px #0002;
 }
 
 .card img{
-  width:100%;
-  height:210px;
-  object-fit:cover;
+width:100%;
+height:210px;
+object-fit:cover;
 }
 
 .content{
-  padding:16px;
+padding:16px;
 }
 
 .title{
-  font-size:20px;
-  font-weight:bold;
-  line-height:1.45;
+font-size:20px;
+font-weight:bold;
+line-height:1.5;
+}
+
+.original{
+margin-top:8px;
+padding:10px;
+background:#f1f3f4;
+border-radius:8px;
+font-size:14px;
+color:#666;
 }
 
 .desc{
-  margin-top:10px;
-  color:#555;
-  line-height:1.6;
+margin-top:12px;
+line-height:1.7;
+color:#444;
 }
 
 .source{
-  margin-top:10px;
-  color:#777;
-  font-size:13px;
+margin-top:10px;
+font-size:13px;
+color:#777;
 }
 
 .read{
-  display:inline-block;
-  margin-top:14px;
-  padding:11px 15px;
-  background:#075e54;
-  color:white;
-  text-decoration:none;
-  border-radius:8px;
+display:inline-block;
+margin-top:14px;
+padding:11px 15px;
+background:#075e54;
+color:white;
+text-decoration:none;
+border-radius:8px;
 }
 
-.error{
-  background:white;
-  padding:25px;
-  border-radius:12px;
-  text-align:center;
-}
 </style>
+
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -173,6 +180,10 @@ Barbaadi
 🇪🇹 Itoophiyaa
 </button>
 
+<button onclick="loadNews('Africa')">
+🌍 Afrikaa
+</button>
+
 <button onclick="loadNews('Islam')">
 🕌 Islaamaa
 </button>
@@ -202,17 +213,103 @@ Barbaadi
 
 <script>
 
-const API =
+
+const NEWS_API =
 "https://freenewsapi.ai/v1/search";
 
 
-async function loadNews(query="world"){
+/*
+=====================================
+NEWS API
+=====================================
+*/
+
+
+async function getNews(query){
+
+const url =
+NEWS_API +
+"?q=" +
+encodeURIComponent(query) +
+"&size=20";
+
+const response =
+await fetch(url);
+
+if(!response.ok){
+
+throw new Error(
+"News API error"
+);
+
+}
+
+return await response.json();
+
+}
+
+
+/*
+=====================================
+TRANSLATION
+=====================================
+
+As keessatti yeroo booda
+Google Translation Backend
+galchuu dandeenya.
+
+Ammaaf oduu original
+ni agarsiisa.
+*/
+
+
+async function translateToOromo(text){
+
+/*
+GOOGLE TRANSLATION BACKEND
+bakka kana booda galchina.
+
+Fakkeenya:
+
+const response = await fetch(
+"https://YOUR-BACKEND/translate",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+text:text,
+target:"om"
+})
+}
+);
+
+const data = await response.json();
+
+return data.translation;
+*/
+
+return text;
+
+}
+
+
+/*
+=====================================
+LOAD NEWS
+=====================================
+*/
+
+
+async function loadNews(query){
 
 const status =
 document.getElementById("status");
 
 const news =
 document.getElementById("news");
+
 
 status.innerHTML =
 "⏳ Oduu barbaadaa jira...";
@@ -222,31 +319,8 @@ news.innerHTML = "";
 
 try{
 
-const url =
-API +
-"?q=" +
-encodeURIComponent(query) +
-"&size=20";
-
-
-const response =
-await fetch(url);
-
-
-if(!response.ok){
-
-throw new Error(
-"API error " + response.status
-);
-
-}
-
-
 const data =
-await response.json();
-
-
-console.log(data);
+await getNews(query);
 
 
 const articles =
@@ -269,39 +343,55 @@ articles.length +
 " argame";
 
 
-articles.forEach(article => {
+for(
+const article of articles
+){
+
+const originalTitle =
+article.title || "";
+
+
+const originalDescription =
+article.description || "";
+
+
+const title =
+await translateToOromo(
+originalTitle
+);
+
+
+const description =
+await translateToOromo(
+originalDescription
+);
+
+
+const image =
+article.image ||
+"https://images.unsplash.com/photo-1504711434969-e33886168f5c";
+
+
+const link =
+article.url || "#";
+
+
+const source =
+article.sitename ||
+article.host ||
+"Madda hin beekamne";
+
+
+const date =
+article.published_at || "";
 
 
 const card =
 document.createElement("div");
 
+
 card.className =
 "card";
-
-
-const title =
-article.title ||
-"Mata-duree hin jiru";
-
-
-const link =
-article.url ||
-"#";
-
-
-const date =
-article.published_at ||
-"";
-
-
-const host =
-article.host ||
-"Madda hin beekamne";
-
-
-let image =
-article.image ||
-"https://images.unsplash.com/photo-1504711434969-e33886168f5c";
 
 
 card.innerHTML = `
@@ -318,8 +408,17 @@ this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c'
 ${title}
 </div>
 
+<div class="original">
+Afaan jalqabaa:<br>
+${originalTitle}
+</div>
+
+<div class="desc">
+${description}
+</div>
+
 <div class="source">
-📰 ${host}
+📰 ${source}
 </div>
 
 <div class="source">
@@ -330,20 +429,20 @@ ${title}
 class="read"
 href="${link}"
 target="_blank">
+
 Oduu guutuu dubbisi →
+
 </a>
 
 </div>
-
 `;
 
 
 news.appendChild(card);
 
-});
-
 }
 
+}
 
 catch(error){
 
@@ -356,14 +455,17 @@ status.innerHTML =
 
 news.innerHTML = `
 
-<div class="error">
+<div class="card">
 
-<h2>Rakkoon uumame</h2>
+<div class="content">
+
+<h2>Rakkoo uumame</h2>
 
 <p>
-Internet kee ilaali ykn daqiiqaa muraasa booda
-irra deebi'i.
+Internet ykn server oduu ilaali.
 </p>
+
+</div>
 
 </div>
 
@@ -374,10 +476,20 @@ irra deebi'i.
 }
 
 
-async function searchNews(){
+/*
+=====================================
+SEARCH
+=====================================
+*/
+
+
+function searchNews(){
 
 const text =
-document.getElementById("search").value.trim();
+document
+.getElementById("search")
+.value
+.trim();
 
 
 if(text === ""){
@@ -394,9 +506,18 @@ loadNews(text);
 }
 
 
+/*
+=====================================
+START
+=====================================
+*/
+
+
 loadNews("world");
 
+
 </script>
+
 
 </body>
   </html>
