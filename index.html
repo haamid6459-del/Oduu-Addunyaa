@@ -14,24 +14,23 @@
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f3f5f7;
+  background:#f4f6f8;
   color:#222;
-  transition:.3s;
 }
 
 body.dark{
   background:#121212;
-  color:#eee;
+  color:#fff;
 }
 
 header{
   background:#075e54;
   color:white;
-  padding:16px;
+  padding:18px 12px;
   text-align:center;
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:10;
 }
 
 header h1{
@@ -40,9 +39,9 @@ header h1{
 
 .search{
   display:flex;
-  gap:7px;
-  max-width:800px;
+  max-width:700px;
   margin:auto;
+  gap:6px;
 }
 
 .search input{
@@ -56,22 +55,22 @@ header h1{
 .search button{
   border:0;
   border-radius:8px;
-  padding:0 15px;
-  font-weight:bold;
+  padding:10px 15px;
+  cursor:pointer;
 }
 
 .tools{
+  margin-top:12px;
   display:flex;
   justify-content:center;
-  gap:8px;
-  margin-top:12px;
+  gap:7px;
   flex-wrap:wrap;
 }
 
 .tools button{
   border:0;
-  padding:9px 13px;
   border-radius:20px;
+  padding:9px 13px;
   cursor:pointer;
 }
 
@@ -81,9 +80,6 @@ header h1{
   overflow-x:auto;
   padding:12px;
   background:white;
-  position:sticky;
-  top:123px;
-  z-index:15;
 }
 
 .dark .categories{
@@ -92,16 +88,12 @@ header h1{
 
 .categories button{
   white-space:nowrap;
+  padding:9px 14px;
+  border-radius:20px;
   border:1px solid #075e54;
   background:white;
   color:#075e54;
-  padding:9px 14px;
-  border-radius:20px;
-}
-
-.dark .categories button{
-  background:#222;
-  color:#eee;
+  cursor:pointer;
 }
 
 .categories button.active{
@@ -109,14 +101,14 @@ header h1{
   color:white;
 }
 
+.dark .categories button{
+  background:#222;
+  color:white;
+}
+
 #status{
   text-align:center;
   padding:15px;
-  color:#666;
-}
-
-.dark #status{
-  color:#bbb;
 }
 
 .news{
@@ -128,9 +120,9 @@ header h1{
 .card{
   background:white;
   margin-bottom:16px;
-  border-radius:13px;
+  border-radius:12px;
   overflow:hidden;
-  box-shadow:0 2px 9px #0002;
+  box-shadow:0 2px 8px #0002;
 }
 
 .dark .card{
@@ -139,9 +131,8 @@ header h1{
 
 .card img{
   width:100%;
-  height:220px;
+  height:210px;
   object-fit:cover;
-  background:#ddd;
 }
 
 .content{
@@ -151,13 +142,13 @@ header h1{
 .title{
   font-size:20px;
   font-weight:bold;
-  line-height:1.45;
-  margin-bottom:10px;
+  line-height:1.4;
 }
 
 .description{
-  color:#555;
+  margin-top:10px;
   line-height:1.6;
+  color:#555;
 }
 
 .dark .description{
@@ -165,40 +156,36 @@ header h1{
 }
 
 .meta{
-  font-size:13px;
-  color:#777;
   margin:12px 0;
-}
-
-.dark .meta{
-  color:#aaa;
+  color:#777;
+  font-size:13px;
 }
 
 .actions{
   display:flex;
-  gap:8px;
   flex-wrap:wrap;
+  gap:7px;
 }
 
 .actions button,
-.read{
+.actions a{
   border:0;
-  text-decoration:none;
-  padding:10px 13px;
   border-radius:7px;
+  padding:10px 12px;
+  text-decoration:none;
   cursor:pointer;
   background:#075e54;
   color:white;
 }
 
-.favorite{
-  background:#e9b949 !important;
-  color:#111 !important;
+.actions .save{
+  background:#e0a800;
+  color:#111;
 }
 
 .empty{
   text-align:center;
-  padding:40px 15px;
+  padding:40px;
 }
 
 footer{
@@ -218,9 +205,8 @@ footer{
 <div class="search">
 
 <input
-id="searchInput"
-type="text"
-placeholder="Oduu barbaadi..."
+  id="searchInput"
+  placeholder="Oduu barbaadi..."
 >
 
 <button onclick="searchNews()">
@@ -250,28 +236,34 @@ placeholder="Oduu barbaadi..."
 
 <div class="categories">
 
-<button class="active"
-onclick="loadCategory('world',this)">
+<button
+  class="active"
+  onclick="loadCategory('world',this)">
 🌍 Addunyaa
 </button>
 
-<button onclick="loadCategory('Ethiopia',this)">
+<button
+  onclick="loadCategory('Ethiopia',this)">
 🇪🇹 Itoophiyaa
 </button>
 
-<button onclick="loadCategory('Islam',this)">
+<button
+  onclick="loadCategory('Islam',this)">
 ☪️ Islaamaa
 </button>
 
-<button onclick="loadCategory('Sports',this)">
+<button
+  onclick="loadCategory('Sports',this)">
 ⚽ Ispoortii
 </button>
 
-<button onclick="loadCategory('Technology',this)">
+<button
+  onclick="loadCategory('Technology',this)">
 💻 Teknooloojii
 </button>
 
-<button onclick="loadCategory('Business',this)">
+<button
+  onclick="loadCategory('Business',this)">
 💰 Dinagdee
 </button>
 
@@ -283,7 +275,10 @@ onclick="loadCategory('world',this)">
 </div>
 
 
-<main id="news" class="news"></main>
+<main
+  id="news"
+  class="news">
+</main>
 
 
 <footer>
@@ -299,132 +294,136 @@ document.getElementById("news");
 const statusBox =
 document.getElementById("status");
 
-let currentCategory="world";
+let currentItems = [];
 
-let currentItems=[];
+let currentQuery =
+"world news OR international news";
 
 
-// ==========================
-// RSS
-// ==========================
+// =========================
+// ODUU FIDUU
+// =========================
 
-function makeRSS(query){
+async function getNews(query){
 
-return "https://news.google.com/rss/search?q="
+currentQuery = query;
+
+statusBox.innerHTML =
+"⏳ Oduu haaraa fe'aa jira...";
+
+newsBox.innerHTML = "";
+
+try{
+
+const rss =
+"https://news.google.com/rss/search?q="
 +
 encodeURIComponent(query)
 +
 "&hl=en-US&gl=US&ceid=US:en";
 
-}
-
-
-// ==========================
-// FEED
-// ==========================
-
-async function getNews(query){
-
-statusBox.innerHTML=
-"⏳ Oduu haaraa fe'aa jira...";
-
-newsBox.innerHTML="";
-
-try{
-
-const rss=makeRSS(query);
-
-const api=
+const api =
 "https://api.rss2json.com/v1/api.json?rss_url="
 +
 encodeURIComponent(rss);
 
-const response=
+const response =
 await fetch(api);
 
-if(!response.ok)
+if(!response.ok){
 throw new Error("Network error");
+}
 
-const data=
+const data =
 await response.json();
 
 if(!data.items ||
-data.items.length===0){
+data.items.length === 0){
 
-statusBox.innerHTML=
-"❌ Oduun hin argamne.";
+statusBox.innerHTML =
+"❌ Oduu hin argamne.";
 
 return;
+}
+
+currentItems =
+data.items;
+
+showNews(currentItems);
 
 }
 
-currentItems=data.items;
+catch(error){
 
-showNews(data.items);
+console.error(error);
 
-}catch(error){
+statusBox.innerHTML =
+"❌ Oduu fiduu hin dandeenye.";
 
-console.log(error);
-
-statusBox.innerHTML=
-"❌ Oduu fe'uu hin dandeenye. Internet ilaali.";
+newsBox.innerHTML = `
+<div class="empty">
+<p>Internet kee ilaali.</p>
+<button onclick="refreshNews()">
+🔄 Irra deebi'i
+</button>
+</div>
+`;
 
 }
 
 }
 
 
-// ==========================
-// DISPLAY
-// ==========================
+// =========================
+// ODUU AGARSIISUU
+// =========================
 
 function showNews(items){
 
-statusBox.innerHTML=
-"📰 Oduu "+items.length+" argame";
+statusBox.innerHTML =
+"📰 Oduu " + items.length + " argame";
 
-newsBox.innerHTML="";
+newsBox.innerHTML = "";
 
-items.forEach((item,index)=>{
+items.forEach(function(item,index){
 
-let image=
+let image =
 item.thumbnail ||
 getImage(item.description) ||
 "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900";
 
 
-let title=
-cleanText(item.title || "Oduu");
+let title =
+clean(item.title || "Oduu");
 
-let description=
-cleanText(item.description || "");
+let description =
+clean(item.description || "");
 
-if(description.length>280){
+if(description.length > 250){
 
-description=
-description.substring(0,280)+"...";
+description =
+description.substring(0,250) +
+"...";
 
 }
 
 
-let saved=
-getFavorites().some(
-x=>x.link===item.link
-);
+let saved =
+isSaved(item.link);
 
 
-let card=
+let card =
 document.createElement("article");
 
-card.className="card";
+card.className = "card";
 
-card.innerHTML=`
+card.innerHTML = `
 
 <img
 src="${image}"
-onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900'"
-alt="Suuraa oduu"
->
+onerror="
+this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900'
+">
 
 <div class="content">
 
@@ -445,29 +444,24 @@ ${description}
 <div class="actions">
 
 <a
-class="read"
 href="${item.link}"
-target="_blank"
->
+target="_blank">
 🔗 Guutuu dubbisi
 </a>
 
 <button
-class="${saved?'favorite':''}"
-onclick="saveNews(${index})"
->
-${saved?'⭐ Kuufame':'☆ Kuusi'}
+class="save"
+onclick="saveNews(${index})">
+${saved ? "⭐ Kuufame" : "☆ Kuusi"}
 </button>
 
 <button
-onclick="speakNews(${index})"
->
+onclick="speakNews(${index})">
 🔊 Dubbisi
 </button>
 
 <button
-onclick="shareNews(${index})"
->
+onclick="shareNews(${index})">
 📤 Qoodi
 </button>
 
@@ -483,140 +477,179 @@ newsBox.appendChild(card);
 }
 
 
-// ==========================
-// SEARCH
-// ==========================
-
-function searchNews(){
-
-const q=
-document
-.getElementById("searchInput")
-.value
-.trim();
-
-if(!q){
-
-alert("Maal barbaadu akka barbaaddu barreessi.");
-
-return;
-
-}
-
-getNews(q);
-
-}
-
-
-// ENTER
-
-document
-.getElementById("searchInput")
-.addEventListener(
-"keydown",
-function(e){
-
-if(e.key==="Enter"){
-searchNews();
-}
-
-});
-
-
-// ==========================
+// =========================
 // CATEGORY
-// ==========================
+// =========================
 
 function loadCategory(category,button){
 
-currentCategory=category;
-
 document
 .querySelectorAll(".categories button")
-.forEach(
-btn=>btn.classList.remove("active")
-);
+.forEach(function(btn){
+
+btn.classList.remove("active");
+
+});
 
 button.classList.add("active");
 
 
-let query="";
+let query = "";
 
-if(category==="world")
-query="world news OR international news";
+if(category === "world"){
 
-if(category==="Ethiopia")
-query="Ethiopia news OR Ethiopia latest news";
+query =
+"world news OR international news";
 
-if(category==="Islam")
-query="Islamic news OR Muslim news OR Quran";
+}
 
-if(category==="Sports")
-query="sports news OR football news";
+else if(category === "Ethiopia"){
 
-if(category==="Technology")
-query="technology news OR artificial intelligence";
+query =
+"Ethiopia news OR Ethiopia latest news";
 
-if(category==="Business")
-query="business news OR economy news";
+}
 
+else if(category === "Islam"){
+
+query =
+"Islamic news OR Muslim news OR Quran";
+
+}
+
+else if(category === "Sports"){
+
+query =
+"sports news OR football news";
+
+}
+
+else if(category === "Technology"){
+
+query =
+"technology news OR artificial intelligence";
+
+}
+
+else if(category === "Business"){
+
+query =
+"business news OR economy news";
+
+}
 
 getNews(query);
 
 }
 
 
-// ==========================
-// REFRESH
-// ==========================
+// =========================
+// SEARCH
+// =========================
 
-function refreshNews(){
+function searchNews(){
 
-getNews(
-currentCategory==="world"
-?
-"world news OR international news"
-:
-currentCategory+" news"
+const input =
+document.getElementById("searchInput");
+
+const query =
+input.value.trim();
+
+if(!query){
+
+alert(
+"Maal barbaaduu akka barbaaddu barreessi."
 );
+
+return;
+}
+
+getNews(query);
 
 }
 
 
-// ==========================
+// Enter
+document
+.getElementById("searchInput")
+.addEventListener("keydown",function(e){
+
+if(e.key === "Enter"){
+
+searchNews();
+
+}
+
+});
+
+
+// =========================
+// REFRESH
+// =========================
+
+function refreshNews(){
+
+getNews(currentQuery);
+
+}
+
+
+// =========================
 // FAVORITES
-// ==========================
+// =========================
 
 function getFavorites(){
+
+try{
 
 return JSON.parse(
 localStorage.getItem("favorites") || "[]"
 );
 
 }
+catch(e){
+
+return [];
+
+}
+
+}
+
+
+function isSaved(link){
+
+return getFavorites()
+.some(function(item){
+
+return item.link === link;
+
+});
+
+}
 
 
 function saveNews(index){
 
-const item=currentItems[index];
+const item =
+currentItems[index];
 
-let favorites=getFavorites();
+let favorites =
+getFavorites();
 
-const exists=
-favorites.some(
-x=>x.link===item.link
-);
+if(isSaved(item.link)){
 
-if(exists){
+favorites =
+favorites.filter(function(x){
 
-favorites=
-favorites.filter(
-x=>x.link!==item.link
-);
+return x.link !== item.link;
+
+});
 
 alert("⭐ Oduu kuufame keessaa haqame.");
 
-}else{
+}
+
+else{
 
 favorites.push(item);
 
@@ -634,85 +667,88 @@ showNews(currentItems);
 }
 
 
-// ==========================
-// SHOW FAVORITES
-// ==========================
+// =========================
+// FAVORITES AGARSIISI
+// =========================
 
 function showFavorites(){
 
-const favorites=getFavorites();
+const favorites =
+getFavorites();
 
-if(favorites.length===0){
+if(favorites.length === 0){
 
-statusBox.innerHTML=
+statusBox.innerHTML =
 "⭐ Oduu kuufame hin jiru.";
 
-newsBox.innerHTML=
-`
+newsBox.innerHTML = `
 <div class="empty">
 ⭐ Ammaaf oduu hin kuufamne.
 </div>
 `;
 
 return;
-
 }
 
-currentItems=favorites;
+currentItems =
+favorites;
 
 showNews(favorites);
 
 }
 
 
-// ==========================
-// SPEAK
-// ==========================
+// =========================
+// SAGALEE
+// =========================
 
 function speakNews(index){
 
-const item=currentItems[index];
+const item =
+currentItems[index];
 
-if(!("speechSynthesis" in window)){
+if(!window.speechSynthesis){
 
 alert(
 "Browser kee sagalee dubbisuu hin deeggaru."
 );
 
 return;
-
 }
 
-speechSynthesis.cancel();
+window.speechSynthesis.cancel();
 
-const text=
-cleanText(item.title)+
-". "+
-cleanText(item.description || "");
+const text =
+clean(item.title || "") +
+". " +
+clean(item.description || "");
 
-const speech=
+const voice =
 new SpeechSynthesisUtterance(text);
 
-speech.lang="om-ET";
+voice.lang = "om-ET";
 
-speech.rate=0.9;
+voice.rate = 0.9;
 
-speech.pitch=1;
-
-speechSynthesis.speak(speech);
+window.speechSynthesis.speak(voice);
 
 }
 
 
-// ==========================
+// =========================
 // SHARE
-// ==========================
+// =========================
 
 async function shareNews(index){
 
-const item=currentItems[index];
+const item =
+currentItems[index];
 
-const shareData={
+if(navigator.share){
+
+try{
+
+await navigator.share({
 
 title:item.title,
 
@@ -720,18 +756,14 @@ text:item.title,
 
 url:item.link
 
-};
+});
 
+}
+catch(e){}
 
-if(navigator.share){
+}
 
-try{
-
-await navigator.share(shareData);
-
-}catch(e){}
-
-}else{
+else{
 
 try{
 
@@ -740,10 +772,11 @@ item.link
 );
 
 alert(
-"🔗 Linkii oduu copy godhame."
+"🔗 Linkiin copy godhameera."
 );
 
-}catch(e){
+}
+catch(e){
 
 alert(item.link);
 
@@ -754,9 +787,9 @@ alert(item.link);
 }
 
 
-// ==========================
+// =========================
 // DARK MODE
-// ==========================
+// =========================
 
 function toggleDark(){
 
@@ -765,26 +798,19 @@ document
 .classList
 .toggle("dark");
 
-const dark=
-document
-.body
-.classList
-.contains("dark");
+const enabled =
+document.body.classList.contains("dark");
 
 localStorage.setItem(
 "darkMode",
-dark
+enabled
 );
 
 }
 
 
-// ==========================
-// LOAD DARK MODE
-// ==========================
-
 if(
-localStorage.getItem("darkMode")==="true"
+localStorage.getItem("darkMode") === "true"
 ){
 
 document
@@ -795,16 +821,16 @@ document
 }
 
 
-// ==========================
-// CLEAN
-// ==========================
+// =========================
+// TEXT CLEAN
+// =========================
 
-function cleanText(text){
+function clean(text){
 
-const div=
+const div =
 document.createElement("div");
 
-div.innerHTML=text;
+div.innerHTML = text;
 
 return div.textContent
 .replace(/\s+/g," ")
@@ -813,34 +839,48 @@ return div.textContent
 }
 
 
-// ==========================
-// IMAGE
-// ==========================
+// =========================
+// SUURAA
+// =========================
 
 function getImage(description){
 
-const div=
+if(!description){
+return null;
+}
+
+const div =
 document.createElement("div");
 
-div.innerHTML=description;
+div.innerHTML =
+description;
 
-const img=
+const img =
 div.querySelector("img");
 
-return img ? img.src : null;
+return img ?
+img.src :
+null;
 
 }
 
 
-// ==========================
+// =========================
 // DATE
-// ==========================
+// =========================
 
 function formatDate(date){
 
-if(!date)return "";
+if(!date){
+return "";
+}
 
-const d=new Date(date);
+const d =
+new Date(date);
+
+if(isNaN(d.getTime())){
+return "";
+}
 
 return d.toLocaleString(
 "om-ET",
@@ -851,9 +891,9 @@ timeStyle:"short"
 );
 
 
-// ==========================
-// START
-// ==========================
+// =========================
+// JALQABAA
+// =========================
 
 getNews(
 "world news OR international news"
