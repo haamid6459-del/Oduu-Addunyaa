@@ -7,10 +7,14 @@
 <title>Oduu Addunyaa</title>
 
 <style>
+*{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f1f3f5;
+  background:#f2f4f7;
 }
 
 header{
@@ -20,10 +24,25 @@ header{
   text-align:center;
 }
 
+header h1{
+  margin:0;
+  font-size:25px;
+}
+
+button{
+  margin-top:15px;
+  padding:10px 18px;
+  border:0;
+  border-radius:8px;
+  background:white;
+  color:#075e54;
+  font-weight:bold;
+}
+
 #status{
   text-align:center;
-  padding:15px;
-  font-weight:bold;
+  padding:18px;
+  font-size:16px;
 }
 
 #news{
@@ -35,9 +54,9 @@ header{
 .card{
   background:white;
   margin-bottom:18px;
-  border-radius:12px;
+  border-radius:14px;
   overflow:hidden;
-  box-shadow:0 2px 8px #0002;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
 }
 
 .card img{
@@ -47,7 +66,7 @@ header{
 }
 
 .content{
-  padding:15px;
+  padding:16px;
 }
 
 .title{
@@ -56,26 +75,26 @@ header{
   line-height:1.4;
 }
 
-.date{
-  color:#777;
-  font-size:13px;
-  margin-top:8px;
-}
-
-.description{
+.desc{
   margin-top:10px;
   line-height:1.6;
-  color:#444;
+  color:#555;
+}
+
+.date{
+  margin-top:8px;
+  font-size:13px;
+  color:#888;
 }
 
 .link{
   display:inline-block;
-  margin-top:12px;
-  padding:10px 15px;
+  margin-top:14px;
+  padding:11px 15px;
   background:#075e54;
   color:white;
   text-decoration:none;
-  border-radius:7px;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -83,7 +102,13 @@ header{
 <body>
 
 <header>
+
 <h1>📰 Oduu Addunyaa</h1>
+
+<button onclick="loadNews()">
+🔄 Oduu Haaraa
+</button>
+
 </header>
 
 <div id="status">
@@ -92,6 +117,7 @@ header{
 
 <div id="news"></div>
 
+
 <script>
 
 async function loadNews(){
@@ -99,55 +125,99 @@ async function loadNews(){
 const status = document.getElementById("status");
 const news = document.getElementById("news");
 
+status.innerHTML = "⏳ Oduu fe'aa jira...";
 news.innerHTML = "";
 
-try{
+
+/* BBC WORLD RSS */
 
 const rss =
 "https://feeds.bbci.co.uk/news/world/rss.xml";
 
+
+/* RSS → JSON API */
+
 const api =
-"https://api.rss2json.com/v1/api.json?rss_url="
-+ encodeURIComponent(rss);
+"https://rss-to-json-serverless-api.vercel.app/api?url="
++
+encodeURIComponent(rss);
+
+
+try{
 
 const response = await fetch(api);
 
 if(!response.ok){
-throw new Error("API error");
+
+throw new Error("API hin deebine");
+
 }
 
 const data = await response.json();
 
 console.log(data);
 
-if(data.status !== "ok"){
-throw new Error("News feed failed");
-}
 
-if(!data.items || data.items.length === 0){
+/* DATA CHECK */
+
+let items =
+data.items ||
+data.entries ||
+data.feed?.items ||
+[];
+
+
+if(items.length === 0){
 
 status.innerHTML =
 "❌ Oduu hin argamne.";
 
 return;
+
 }
 
-status.innerHTML =
-"✅ Oduu haaraa argame";
 
-data.items.forEach(item => {
+status.innerHTML =
+"✅ Oduu haaraa " + items.length + " argame";
+
+
+/* NEWS */
+
+items.slice(0,20).forEach(item => {
+
+
+let title =
+item.title || "Mata-dureen hin jiru";
+
+
+let description =
+item.description ||
+item.content ||
+"Oduu guutuu dubbisuuf cuqaasi.";
+
+
+let link =
+item.link || "#";
+
 
 let image =
 item.thumbnail ||
+item.enclosure?.link ||
 "https://images.unsplash.com/photo-1504711434969-e33886168f5c";
 
-let description =
-item.description || "";
+
+let date =
+item.pubDate ||
+item.isoDate ||
+"";
+
 
 let card =
 document.createElement("div");
 
+
 card.className = "card";
+
 
 card.innerHTML = `
 
@@ -159,20 +229,20 @@ onerror="this.style.display='none'"
 <div class="content">
 
 <div class="title">
-${item.title}
+${title}
 </div>
 
 <div class="date">
-📅 ${item.pubDate || ""}
+📅 ${date}
 </div>
 
-<div class="description">
+<div class="desc">
 ${description}
 </div>
 
 <a
 class="link"
-href="${item.link}"
+href="${link}"
 target="_blank">
 Oduu guutuu dubbisi →
 </a>
@@ -180,6 +250,7 @@ Oduu guutuu dubbisi →
 </div>
 
 `;
+
 
 news.appendChild(card);
 
@@ -189,26 +260,40 @@ news.appendChild(card);
 
 catch(error){
 
-console.error(error);
+console.log(error);
 
 status.innerHTML =
 "❌ Oduu fiduun dadhabe.";
 
 news.innerHTML = `
+
 <div class="card">
+
 <div class="content">
-<h2>Rakkoo uumame</h2>
+
+<h2>Rakkoo API</h2>
+
 <p>
-Internet kee ilaali. Yoo internet jiraate,
-API oduu irratti rakkoon jiraachuu danda'a.
+Appichi banuu danda'a, garuu server oduu irraa
+odeeffannoo deebii hin arganne.
 </p>
+
+<p>
+Mee button 🔄 Oduu Haaraa jedhu cuqaasi.
+</p>
+
 </div>
+
 </div>
+
 `;
 
 }
 
 }
+
+
+/* START */
 
 loadNews();
 
